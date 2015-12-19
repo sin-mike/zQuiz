@@ -113,16 +113,27 @@
           }
 
           $("#pagecount").text((i+1)+"/"+questions.length)
-            var questline = q.qkey+": "+((q.line._group) ? ("["+q.line._group+"] ") : "")+q.qdef+"<br>"+
-                            q.akey+"= ?<br>"
+            var questline
             if ('pic' in q.line){
-                questline = questline + "<img src=\"" + q.line.pic + "\">"
+                questline = "<img src=\"" + q.line.pic + "\"> <br>"
+            }
+            else {
+                questline = q.qkey+": "+((q.line._group) ? ("["+q.line._group+"] ") : "")+q.qdef+"<br>"
+            }
+
+            if (q.akey == 'pic') {
+                questline = questline +
+                            "Какое изображение?<br>"
+            }
+            else {
+                questline = questline +
+                            q.akey+"?<br>"
             }
           display.html(questline)
 
             if (q.akey == 'pic') {
                 q.candidates.forEach(function(d,i) {
-                    display.append($("<div>").html("<img src=\"" + d + "\">").attr("id",d).click(checkAnswer))
+                    display.append($("<div>").html("<br> <img src=\"" + d + "\">").attr("id",d).click(checkAnswer))
                 })
             } else {
                 q.candidates.forEach(function(d,i) {

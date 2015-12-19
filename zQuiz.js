@@ -93,7 +93,7 @@ if (typeof zQuiz != "object") zQuiz = {};
         // then break
         if ((qkey[0] == '_') || (qkey in sets.noQuestion) || (options.onlyQuestion && !(qkey in sets.onlyQuestion))) return
         Object.keys(line).forEach(function(akey) {
-          if ((akey[0] == '_') || (akey == qkey) || (akey in sets.noAnswer) || (akey == qkey) ||(options.onlyAnswer && !(akey in sets.onlyAnswer))) return
+          if ((akey[0] == '_') || (akey == qkey) || (akey in sets.noAnswer) ||(options.onlyAnswer && !(akey in sets.onlyAnswer))) return
           
           toArray(line[qkey]).forEach(function(qdef,qdefNum) {
             var correctAnswers = toSet(line[akey])
