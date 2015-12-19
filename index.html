@@ -30,46 +30,42 @@
       var quizes = []
 //      picroot = '/static/'
 //      picroot = './pics/'
-      picroot = 'https://raw.githubusercontent.com/sin-mike/zQuiz/master/pics/'
+      var picroot = 'https://raw.githubusercontent.com/sin-mike/zQuiz/master/pics/'
 
       quizes.push({title: 'Ботаника',
         def: [
             {
                 название: "Anabaena",
                 описание: 'Anabaena',
-                pic: "1.gif",
-                _pic: picroot.concat("1.gif")
+                pic: picroot.concat("1.gif")
             },
             {
                 название: "Anabaenopsis",
                 описание: 'Anabaenopsis',
-                pic: "2.gif",
-                _pic: picroot.concat("2.gif")
+                pic: picroot.concat("2.gif")
             },
             {
                 название: "Aphanizomenon",
                 описание: 'Aphanizomenon',
-                pic: "3.gif",
-                _pic: picroot.concat("3.gif")
+                pic: picroot.concat("3.gif")
             },
             {
                 название: "Chlamidomonas",
                 описание: 'Chlamidomonas',
-                pic: "4.gif",
-                _pic: picroot.concat("4.gif")
+                pic: picroot.concat("4.gif")
             },
             {
                 название: "Chlorella",
                 описание: 'Chlorella',
-                pic: "5.gif",
-                _pic: picroot.concat("5.gif")
+                pic: picroot.concat("5.gif")
+            },
+            {
+                название: "Closterium",
+                описание: 'Closterium',
+                pic: picroot.concat("6.jpg")
             }
 
-        ],
-          options: {
-              noQuestion: ['pic'],
-              noAnswer: ['pic']
-          }
+        ]
       })
               
 
@@ -117,12 +113,23 @@
           }
 
           $("#pagecount").text((i+1)+"/"+questions.length)
-          display.html(q.qkey+": "+((q.line._group) ? ("["+q.line._group+"] ") : "")+q.qdef+"<br>"+
-                       q.akey+"= ?<br>"+
-                       "<img src=\"" + q.line._pic + "\">")
-          q.candidates.forEach(function(d,i) {
-            display.append(button().text(d).attr("id",d).click(checkAnswer))
-          })
+            var questline = q.qkey+": "+((q.line._group) ? ("["+q.line._group+"] ") : "")+q.qdef+"<br>"+
+                            q.akey+"= ?<br>"
+            if ('pic' in q.line){
+                questline = questline + "<img src=\"" + q.line.pic + "\">"
+            }
+          display.html(questline)
+
+            if (q.akey == 'pic') {
+                q.candidates.forEach(function(d,i) {
+                    display.append($("<div>").html("<img src=\"" + d + "\">").attr("id",d).click(checkAnswer))
+                })
+            } else {
+                q.candidates.forEach(function(d,i) {
+                    display.append(button().text(d).attr("id",d).click(checkAnswer))
+                })
+            }
+
           display.trigger("create")
         }
         
