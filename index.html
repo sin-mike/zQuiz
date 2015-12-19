@@ -28,6 +28,9 @@
 
     <script type="text/javascript">
       var quizes = []
+//      picroot = '/static/'
+//      picroot = './pics/'
+      picroot = 'https://raw.githubusercontent.com/sin-mike/zQuiz/master/pics/'
 
       quizes.push({title: 'Ботаника',
         def: [
@@ -35,31 +38,31 @@
                 название: "Anabaena",
                 описание: 'Anabaena',
                 pic: "1.gif",
-                _pic:"https://cdn.rawgit.com/sin-mike/zQuiz/master/pics/1.gif"
+                _pic: picroot.concat("1.gif")
             },
             {
                 название: "Anabaenopsis",
                 описание: 'Anabaenopsis',
                 pic: "2.gif",
-                _pic:"https://cdn.rawgit.com/sin-mike/zQuiz/master/pics/2.gif"
+                _pic: picroot.concat("2.gif")
             },
             {
                 название: "Aphanizomenon",
                 описание: 'Aphanizomenon',
                 pic: "3.gif",
-                _pic:"https://cdn.rawgit.com/sin-mike/zQuiz/master/pics/3.gif"
+                _pic: picroot.concat("3.gif")
             },
             {
                 название: "Chlamidomonas",
                 описание: 'Chlamidomonas',
                 pic: "4.gif",
-                _pic:"https://cdn.rawgit.com/sin-mike/zQuiz/master/pics/4.gif"
+                _pic: picroot.concat("4.gif")
             },
             {
                 название: "Chlorella",
                 описание: 'Chlorella',
                 pic: "5.gif",
-                _pic:"https://cdn.rawgit.com/sin-mike/zQuiz/master/pics/5.gif"
+                _pic: picroot.concat("5.gif")
             }
 
         ],
@@ -116,7 +119,7 @@
           $("#pagecount").text((i+1)+"/"+questions.length)
           display.html(q.qkey+": "+((q.line._group) ? ("["+q.line._group+"] ") : "")+q.qdef+"<br>"+
                        q.akey+"= ?<br>"+
-                       "<img src='" + q._pic + "'>")
+                       "<img src=\"" + q.line._pic + "\">")
           q.candidates.forEach(function(d,i) {
             display.append(button().text(d).attr("id",d).click(checkAnswer))
           })
