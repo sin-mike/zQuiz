@@ -19,166 +19,272 @@
   <body>
     <div data-role="page">
         <div data-role="header" data-position="inline">
-            <a href="#" data-icon="home" class="ui-btn-left jqm-home" onclick="main_page()">Home</a>
-            <h1 id="title">Title</h1>
+            <a href="#" data-icon="home" class="ui-btn-left jqm-home" onclick="main_page()">Главное меню</a>
+            <h1 id="title">Заголовок</h1>
             <a href="#" id="pagecount" class="ui-btn-right" >../..</a>
         </div>
         <div data-role="content" id="display" style="text-align:center"></div>
     </div>
 
     <script type="text/javascript">
-      var quizes = []
-//      picroot = '/static/'
-//      picroot = './pics/'
-      var picroot = 'https://raw.githubusercontent.com/sin-mike/zQuiz/master/pics/'
+        var quizGUI = (function() {
+            var lastGrade = 0;
+            var lastQLength = 0;
+            var quizes = [];
+            var picroot = '';
+            var state = 'idle';
 
-      quizes.push({title: 'Ботаника',
-        def: [
-            {
-                название: "Anabaena",
-                описание: 'Anabaena',
-                pic: picroot.concat("1.gif")
-            },
-            {
-                название: "Anabaenopsis",
-                описание: 'Anabaenopsis',
-                pic: picroot.concat("2.gif")
-            },
-            {
-                название: "Aphanizomenon",
-                описание: 'Aphanizomenon',
-                pic: picroot.concat("3.gif")
-            },
-            {
-                название: "Chlamidomonas",
-                описание: 'Chlamidomonas',
-                pic: picroot.concat("4.gif")
-            },
-            {
-                название: "Chlorella",
-                описание: 'Chlorella',
-                pic: picroot.concat("5.gif")
-            },
-            {
-                название: "Closterium",
-                описание: 'Closterium',
-                pic: picroot.concat("6.jpg")
+
+
+            // Establish a channel only if this application is embedded in an iframe.
+            // This will let the parent window communicate with this application using
+            // RPC and bypass SOP restrictions.
+            if (window.parent !== window) {
+                channel = Channel.build({
+                    window: window.parent,
+                    origin: "*",
+                    scope: "JSInput"
+                });
+
+                channel.bind("getGrade", getGrade);
+                channel.bind("getState", getState);
+                channel.bind("setState", setState);
             }
 
-            ]
-      })
-              
+            picroot = '/static/'
+//          picroot = './pics/'
+//            picroot = 'https://raw.githubusercontent.com/sin-mike/zQuiz/master/pics/';
 
-      //----------------------------------------------------------------------------------------------------
-      // Quiz-code
-      //----------------------------------------------------------------------------------------------------
+            quizes.push({
+                title: 'Ботаника',
+                def: [
+                    {
+                        название: "Anabaena",
+                        описание: 'Anabaena',
+                        pic: picroot.concat("1.gif")
+                    },
+                    {
+                        название: "Anabaenopsis",
+                        описание: 'Anabaenopsis',
+                        pic: picroot.concat("2.gif")
+                    },
+                    {
+                        название: "Aphanizomenon",
+                        описание: 'Aphanizomenon',
+                        pic: picroot.concat("3.gif")
+                    },
+                    {
+                        название: "Chlamidomonas",
+                        описание: 'Chlamidomonas',
+                        pic: picroot.concat("4.gif")
+                    },
+                    {
+                        название: "Chlorella",
+                        описание: 'Chlorella',
+                        pic: picroot.concat("5.gif")
+                    },
+                    {
+                        название: "Closterium",
+                        описание: 'Closterium',
+                        pic: picroot.concat("6.jpg")
+                    }
+
+                ]
+            })
 
 
-      function button() { return $("<a/>").attr("data-role",'button') .attr("href",'#').trigger("create") }
-      function randOrd(){return (Math.round(Math.random())-0.5); }
-      function toArray(s) {     return (s==null) ? [] : (typeof(s) == "object" && s.length>0) ? s : [s]   }
-      function toSet(s) { var set = {}; toArray(s).forEach(function(d) { set[d] = true}); return set}
+            //----------------------------------------------------------------------------------------------------
+            // Quiz-code
+            //----------------------------------------------------------------------------------------------------
 
-      display=$("#display")
 
-      function main_page() {
-        $("#title").text("Quiz machine")
-        $("#pagecount").text("/");
-        display.empty()
-        quizes.forEach(function(d,i) {
-          display.append( button().text(d.title).click(function() { showQuiz(quizes[i])}) )   
-        })
-        display.trigger("create")
-      }
-
-      function showQuiz(quiz,pickLines) {
-        var correct = 0
-            ,wrongtxt = ""
-            ,wrongdef = []
-            
-        function nextQuestion(i) {    
-          i = i || 0;
-          if (i >= questions.length) return showScore()
-          var q=questions[i]
-
-          function checkAnswer() { 
-            if (this.id == q.adef) {
-              correct++
-            } else {
-              alert("Wrong. The correct answer is: "+q.adef)
-              wrongtxt+=("<HR><b>("+(i+1)+") "+q.qdef+"</b><br>You guessed: "+this.id+"<br>Correct answer: <b>"+q.adef+"</b>")
-              wrongdef.push(q.lineNum)
-            }
-            nextQuestion(++i)
-          }
-
-          $("#pagecount").text((i+1)+"/"+questions.length)
-
-            var questline
-            if (q.qkey == 'pic'){
-                questline = "<img src=\"" + q.line.pic + "\"> <br>"
-            }
-            else {
-                questline = q.qkey+": "+((q.line._group) ? ("["+q.line._group+"] ") : "")+q.qdef+"<br>"
+            function button() {
+                return $("<a/>").attr("data-role", 'button').attr("href", '#').trigger("create")
             }
 
-            if (q.akey == 'pic') {
-                questline = questline + "Какое изображение?<br>"
-            }
-            else {
-                questline = questline + q.akey+"?<br>"
+            function randOrd() {
+                return (Math.round(Math.random()) - 0.5);
             }
 
-          display.html(questline)
+            function toArray(s) {
+                return (s == null) ? [] : (typeof(s) == "object" && s.length > 0) ? s : [s]
+            }
 
-            if (q.akey == 'pic') {
-                q.candidates.forEach(function(d,i) {
-                    display.append($("<div>").html("<br> <img src=\"" + d + "\">").attr("id",d).click(checkAnswer))
+            function toSet(s) {
+                var set = {};
+                toArray(s).forEach(function (d) {
+                    set[d] = true
+                });
+                return set
+            }
+
+            display = $("#display")
+
+            function main_page() {
+                state = 'idle'
+                $("#title").text("Тест")
+                $("#pagecount").text("/");
+                display.empty()
+                quizes.forEach(function (d, i) {
+                    display.append(button().text(d.title).click(function () {
+                        showQuiz(quizes[i])
+                    }))
                 })
-            } else {
-                q.candidates.forEach(function(d,i) {
-                    display.append(button().text(d).attr("id",d).click(checkAnswer))
-                })
+                display.trigger("create")
             }
 
-          display.trigger("create")
-        }
-        
-        function showScore() {
-          display
-            .empty()
-            .append($("<h1/>").text("Results: "+correct+"/"+questions.length))
-            .append($("<p/>").html(wrongtxt));
-          
-          if (wrongdef.length>0) display.append(
-              button().text("Retake wrong definitions").click(function() {showQuiz(quiz,wrongdef)})
-          );
+            function showQuiz(quiz, pickLines) {
+                var correct = 0
+                        , wrongtxt = ""
+                        , wrongdef = []
 
-          display
-            .append(button().text("Restart").click(function() { showQuiz(quiz)}))
-            .append(button().text("Main menu").click(function() { main_page()}))
-            .trigger("create")
-          }           
+                function nextQuestion(i) {
+                    i = i || 0;
+                    if (i >= questions.length) return showScore()
+                    var q = questions[i]
 
-        $("#title").text((quiz.title || "Quiz")+((pickLines) ? " (*)":""))
-        correct = 0,wrongtxt="",wrongdef=[]
-        questions = zQuiz.multi(quiz.def,$.extend(quiz.options,{includeAnswer:true,onlyLines:pickLines}))
-        display.empty()
-          .append($("<h1/>").text("How many questions?"))
-        
-        for (var i=5;i<questions.length;i+=20) {
-          display.append(
-            button().text(i).click(function() { questions = questions.slice(0,this.text);nextQuestion(0)})
-          )
-        }
-        
-        display
-          .append( button().text("all").click(function() { nextQuestion()}))
-          .trigger("create")
+                    function checkAnswer() {
+                        if (this.id == q.adef) {
+                            correct++
+                        } else {
+//                            alert("Wrong. The correct answer is: " + q.adef)
 
-      }
-             
-      main_page()  
+                            wrongtxt += "<HR><b>(" + (i + 1) + ") " + "</b> <br>"
+
+                            if (q.qkey == 'pic') {
+                                wrongtxt +=  "<img src=\"" + q.qdef + "\"> <br>";
+                            } else {
+                                wrongtxt += "<b>" + q.qdef + "</b> <br>";
+                            }
+
+                            if (q.akey == 'pic') {
+                                wrongtxt += ("Вы выбрали: <br>" + "<img src=\"" + this.id + "\"> <br>" +
+                                             " Правильный ответ: <br>" + "<img src=\"" +  q.adef + "\"> ");
+                            } else {
+                                wrongtxt += ("Вы выбрали: " + this.id + "<br> Правильный ответ: <b>" + q.adef + "</b>");
+                            }
+
+
+                            wrongdef.push(q.lineNum)
+                        }
+                        nextQuestion(++i)
+                    }
+
+                    $("#pagecount").text((i + 1) + "/" + questions.length)
+
+                    var questline
+                    if (q.qkey == 'pic') {
+                        questline = "<img src=\"" + q.line.pic + "\"> <br>"
+                    }
+                    else {
+                        questline = q.qkey + ": " + ((q.line._group) ? ("[" + q.line._group + "] ") : "") + q.qdef + "<br>"
+                    }
+
+                    if (q.akey == 'pic') {
+                        questline = questline + "Какое изображение?<br>"
+                    }
+                    else {
+                        questline = questline + q.akey + "?<br>"
+                    }
+
+                    display.html(questline)
+
+                    if (q.akey == 'pic') {
+                        q.candidates.forEach(function (d, i) {
+                            display.append($("<div>").html("<br> <img src=\"" + d + "\">").attr("id", d).click(checkAnswer))
+                        })
+                    } else {
+                        q.candidates.forEach(function (d, i) {
+                            display.append(button().text(d).attr("id", d).click(checkAnswer))
+                        })
+                    }
+
+                    display.trigger("create")
+                }
+
+                function showScore() {
+                    state = 'finished'
+                    lastGrade = correct;
+                    lastQLength= questions.length;
+                    display
+                            .empty()
+                            .append($("<h1/>").text("Результат: " + correct + "/" + questions.length))
+                            .append($("<p/>").html(wrongtxt));
+
+
+                    if (wrongdef.length > 0) display.append(
+                            button().text("Повторить неправильные").click(function () {
+                                showQuiz(quiz, wrongdef)
+                            })
+                    );
+
+                    display
+                            .append(button().text("Заново").click(function () {
+                                showQuiz(quiz)
+                            }))
+                            .append(button().text("Главное меню").click(function () {
+                                main_page()
+                            }))
+                            .trigger("create")
+                }
+
+                state = 'started';
+
+                $("#title").text((quiz.title || "Тест") + ((pickLines) ? " (*)" : ""))
+                correct = 0, wrongtxt = "", wrongdef = []
+                questions = zQuiz.multi(quiz.def, $.extend(quiz.options, {includeAnswer: true, onlyLines: pickLines}))
+                display.empty()
+                        .append($("<h1/>").text("Количество вопросов"))
+
+                for (var i = 5; i < questions.length; i += 20) {
+                    display.append(
+                            button().text(i).click(function () {
+                                questions = questions.slice(0, this.text);
+                                nextQuestion(0)
+                            })
+                    )
+                }
+
+                display
+                        .append(button().text("все").click(function () {
+                            nextQuestion()
+                        }))
+                        .trigger("create")
+
+            }
+
+            main_page()
+
+            function getGrade() {
+                // The following return value may or may not be used to grade
+                // server-side.
+                // If getState and setState are used, then the Python grader also gets
+                // access to the return value of getState and can choose it instead to
+                // grade.
+                return JSON.stringify([lastGrade, lastQLength]);
+            }
+
+            function getState() {
+                return JSON.stringify(state);
+            }
+
+            // This function will be called with 1 argument when JSChannel is not used,
+            // 2 otherwise. In the latter case, the first argument is a transaction
+            // object that will not be used here
+            // (see http://mozilla.github.io/jschannel/docs/)
+            function setState() {
+//                stateStr = arguments.length === 1 ? arguments[0] : arguments[1];
+//                state = JSON.parse(stateStr);
+//                updateMaterials();
+            }
+
+            return {
+                getState: getState,
+                setState: setState,
+                getGrade: getGrade
+            };
+        } ()
+        );
     </script>
   </body>
 </html>
