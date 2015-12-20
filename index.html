@@ -65,7 +65,7 @@
                 pic: picroot.concat("6.jpg")
             }
 
-        ]
+            ]
       })
               
 
@@ -113,8 +113,9 @@
           }
 
           $("#pagecount").text((i+1)+"/"+questions.length)
+
             var questline
-            if ('pic' in q.line){
+            if (q.qkey == 'pic'){
                 questline = "<img src=\"" + q.line.pic + "\"> <br>"
             }
             else {
@@ -122,13 +123,12 @@
             }
 
             if (q.akey == 'pic') {
-                questline = questline +
-                            "Какое изображение?<br>"
+                questline = questline + "Какое изображение?<br>"
             }
             else {
-                questline = questline +
-                            q.akey+"?<br>"
+                questline = questline + q.akey+"?<br>"
             }
+
           display.html(questline)
 
             if (q.akey == 'pic') {
