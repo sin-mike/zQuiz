@@ -39,17 +39,17 @@
             // Establish a channel only if this application is embedded in an iframe.
             // This will let the parent window communicate with this application using
             // RPC and bypass SOP restrictions.
-            if (window.parent !== window) {
-                channel = Channel.build({
-                    window: window.parent,
-                    origin: "*",
-                    scope: "JSInput"
-                });
-
-                channel.bind("getGrade", getGrade);
-                channel.bind("getState", getState);
-                channel.bind("setState", setState);
-            }
+//            if (window.parent !== window) {
+//                channel = Channel.build({
+//                    window: window.parent,
+//                    origin: "*",
+//                    scope: "JSInput"
+//                });
+//
+//                channel.bind("getGrade", getGrade);
+//                channel.bind("getState", getState);
+//                channel.bind("setState", setState);
+//            }
 
 //            picroot = '/static/'
 //          picroot = './pics/'
